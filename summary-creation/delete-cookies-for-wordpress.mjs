@@ -10,7 +10,7 @@ function getExpressions() {
 export default function deleteCookies(rfs) {
 
 	for(let exp of getExpressions()) {
-		if(exp.test(rfs.originalRequestSummary.url)) {
+		if(exp.test(rfs.originalRequestSummary.originalUrl)) {
 			return
 		}
 

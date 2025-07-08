@@ -9,7 +9,7 @@ export default function idGenerator(rfs) {
 		return
 	}
 
-	let key = rfs.originalRequestSummary.hostname + rfs.originalRequestSummary.url
+	let key = rfs.originalRequestSummary.hostname + rfs.originalRequestSummary.path
 	let parms = Object.entries(rfs.originalRequestSummary.query).map(entry => entry[0] + '=' + entry[1]).join('&')
 	if(parms) {
 		key += '?' + parms

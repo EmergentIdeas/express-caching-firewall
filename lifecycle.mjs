@@ -7,6 +7,9 @@ import deleteCookies from "./summary-creation/delete-cookies-for-wordpress.mjs"
 import idGenerator from "./id-generator.mjs"
 import determineBackend from "./determine-backend.mjs"
 import prepareBackendRequest from "./prepare-backend-request.mjs"
+import determineResponseTransformers from "./responses/determine-response-transformers.mjs"
+import scheduler from './scheduler-basic.mjs'
+import handleRequestWithError from "./handle-request-with-error.mjs"
 
 export default class Lifecycle {
 	
@@ -28,7 +31,11 @@ export default class Lifecycle {
 		this.determineBackend = determineBackend
 		this.prepareBackendRequest = prepareBackendRequest
 		
+		this.determineResponseTransformers = determineResponseTransformers
 		
+		this.scheduler = scheduler
+		
+		this.requestWithErrorHandler = handleRequestWithError
 		
 		
 	}

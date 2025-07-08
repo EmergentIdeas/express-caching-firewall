@@ -19,6 +19,11 @@ export default class RecordingTransform extends Transform {
 	}
 	_transform(chunk, encoding, callback) {
 		chunk = this.transformer ? this.transformer(chunk, encoding) : chunk
+		if(this.transformers) {
+			for(let transformer of this.transformers) {
+				chunk = transformer.call(this, chunk, encoding)
+			}
+		}
 		if(chunk) {
 			let size = chunk.byteLength || chunk.length || JSON.stringify(chunk).length
 			this.byteCount += size

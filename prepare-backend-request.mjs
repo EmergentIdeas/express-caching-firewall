@@ -5,6 +5,13 @@ export default function prepareBackendRequest(rfs) {
 	backendRequest.headers = Object.assign({}, rfs.originalRequestSummary.headers)
 	backendRequest.hostname = 'www.spam.com'
 	backendRequest.headers.host = backendRequest.hostname
-	console.log(backendRequest)
+	
+	
 
+	let url = backendRequest.path
+	let parms = Object.entries(backendRequest.query).map(entry => entry[0] + '=' + entry[1]).join('&')
+	if(parms) {
+		url += '?' + parms
+	}
+	backendRequest.serverRelativeRequest  = url
 }

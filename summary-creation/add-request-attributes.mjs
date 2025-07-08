@@ -4,7 +4,7 @@ export default function addRequestAttributes(rfs) {
 	
 	summary.hostname = req.hostname
 	summary.method = req.method
-	summary.url = req.originalUrl
+	summary.originalUrl = req.originalUrl
 	summary.path = req.path
 	summary.query = Object.assign({}, req.query)
 	

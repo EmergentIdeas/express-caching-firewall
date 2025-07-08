@@ -10,6 +10,7 @@ import prepareBackendRequest from "./prepare-backend-request.mjs"
 import determineResponseTransformers from "./responses/determine-response-transformers.mjs"
 import scheduler from './scheduler-basic.mjs'
 import handleRequestWithError from "./handle-request-with-error.mjs"
+import determineResponseStrategy from "./determine-response-strategy.mjs"
 
 export default class Lifecycle {
 	
@@ -37,6 +38,7 @@ export default class Lifecycle {
 		
 		this.requestWithErrorHandler = handleRequestWithError
 		
+		this.determineResponseStrategy = determineResponseStrategy
 		
 	}
 	

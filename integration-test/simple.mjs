@@ -8,8 +8,8 @@ import HttpsContentSource from '../content-sources/https-content-source.mjs'
 let proxy = new Proxy(new Lifecycle({}))
 
 proxy.contentSources['www.spam.com'] = new HttpsContentSource({
-	// ip: '54.162.145.160'
-	ip: '1.1.1.1'
+	ip: '54.162.145.160'
+	// ip: '1.1.1.1'
 })
 
 

@@ -6,6 +6,9 @@ export default function prepareBackendRequest(rfs) {
 	backendRequest.hostname = 'www.spam.com'
 	backendRequest.headers.host = backendRequest.hostname
 	
+	delete backendRequest.headers['if-none-match']
+	delete backendRequest.headers['if-modified-since']
+	delete backendRequest.headers['vary']
 	
 
 	let url = backendRequest.path

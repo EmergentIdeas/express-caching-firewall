@@ -41,7 +41,6 @@ export default class WebContentSource {
 			, timeout: this.timeout
 
 		}, (res) => {
-			console.log('received response')
 			destination.status(res.statusCode)
 			for (let key of Object.keys(res.headers)) {
 				destination.set(key, res.headers[key])

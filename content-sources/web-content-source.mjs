@@ -24,7 +24,7 @@ export default class WebContentSource {
 	}
 
 	fetch(backendRequest, destination) {
-		let req = this.h.request(`${this.getScheme()}://${backendRequest.hostname}${this.getPortSpec()}${backendRequest.serverRelativeRequest}`, {
+		let req = this.h.request(`${this.getScheme()}://${backendRequest.headers.host}${this.getPortSpec()}${backendRequest.serverRelativeRequest}`, {
 			lookup: (name, options, callback) => {
 				if (typeof callback !== 'function' && typeof options === 'function') {
 					callback = options
@@ -39,6 +39,7 @@ export default class WebContentSource {
 			}
 			, method: backendRequest.method
 			, timeout: this.timeout
+			, headers: backendRequest.headers
 
 		}, (res) => {
 			destination.status(res.statusCode)
@@ -55,12 +56,7 @@ export default class WebContentSource {
 		req.on('error', (e) => {
 			destination.emit('error', e)
 		})
-		if (backendRequest.bodyStream) {
-			backendRequest.bodyStream.pipe(req)
-		}
-		else {
-			req.end()
-		}
+		backendRequest.pipe(req)
 	}
 
 

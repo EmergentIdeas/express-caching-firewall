@@ -1,4 +1,5 @@
 import RecordingTransform from "./recording-transform.mjs";
+import transformHeaders from "./transform-headers.mjs";
 
 export default class RecordingResponse extends RecordingTransform {
 	
@@ -11,6 +12,7 @@ export default class RecordingResponse extends RecordingTransform {
 		super(options)
 		this.headers = {}
 		this.subsequentResponses = options.subsequentResponses || []
+		this.headerTransformers = options.headerTransformers || []
 	}
 	
 	addSubsequentResponse(resp) {
@@ -19,9 +21,16 @@ export default class RecordingResponse extends RecordingTransform {
 	}
 	
 	set(key, value) {
-		this.headers[key] = value
-		for(let resp of this.subsequentResponses) {
-			resp.set(key, value)
+		let mini = {}
+		mini[key] = value
+		if(this.headerTransformers.length > 0) {
+			transformHeaders(mini, this.headerTransformers)
+		}
+		for(let foundKey of Object.keys(mini)) {
+			this.headers[foundKey] = mini[foundKey]
+			for(let resp of this.subsequentResponses) {
+				resp.set(foundKey, mini[foundKey])
+			}
 		}
 	}
 

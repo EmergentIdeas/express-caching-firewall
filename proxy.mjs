@@ -139,14 +139,14 @@ export default class Proxy {
 	}
 
 	performRequest(rfs) {
-		let dest
 
-		this.lifecycle.prepareBackendRequest(rfs)
 
 		if (rfs.responseStrategy === ResponseStrategies.PIPE) {
-			dest = rfs.originalHttpResponse
+			rfs.backend.fetch(rfs.originalHttpRequest, rfs.originalHttpResponse)
 		}
 		else {
+			let dest
+			this.lifecycle.prepareBackendRequest(rfs)
 			let transformers = this.lifecycle.determineResponseTransformers(rfs)
 			let record = true
 			if (rfs.responseStrategy === ResponseStrategies.PASS) {
@@ -163,11 +163,12 @@ export default class Proxy {
 			dest = new RecordingResponse({
 				transformers: transformers
 				, record: record
+				, headerTransformers: this.lifecycle.responseHeaderTransformers
 			})
 
 			dest.addSubsequentResponse(rfs.originalHttpResponse)
 			if (rfs.responseStrategy !== ResponseStrategies.PASS) {
-				dest.on('end', () => {
+				dest.on('finish', () => {
 					this.cacheAsNeeded(rfs, dest)
 				})
 			}
@@ -175,9 +176,10 @@ export default class Proxy {
 				console.log('proxy caught error')
 				this.lifecycle.requestWithErrorHandler(this, rfs)
 			})
+			
+			rfs.backend.fetch(rfs.backendRequestSummary, dest)
 		}
 
-		rfs.backend.fetch(rfs.backendRequestSummary, dest)
 	}
 
 	getExpressHandler() {

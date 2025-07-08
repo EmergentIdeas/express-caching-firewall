@@ -11,6 +11,7 @@ import determineResponseTransformers from "./responses/determine-response-transf
 import scheduler from './scheduler-basic.mjs'
 import handleRequestWithError from "./handle-request-with-error.mjs"
 import determineResponseStrategy from "./determine-response-strategy.mjs"
+import createDeleteHeadersTransform from "./transform-tools/delete-headers-transform.mjs"
 
 export default class Lifecycle {
 	
@@ -30,6 +31,10 @@ export default class Lifecycle {
 		]
 		
 		this.determineBackend = determineBackend
+		
+		this.prepareBackendHeaderTransformers = [
+			createDeleteHeadersTransform(['if-none-match', 'if-modified-since', 'vary', 'accept-encoding'])
+		]
 		this.prepareBackendRequest = prepareBackendRequest
 		
 		this.determineResponseTransformers = determineResponseTransformers
@@ -40,7 +45,12 @@ export default class Lifecycle {
 		
 		this.determineResponseStrategy = determineResponseStrategy
 		
+		this.responseHeaderTransformers = [
+			createDeleteHeadersTransform(['content-length', 'connection', 'date'])
+		]
 	}
 	
 
 }
+
+

@@ -6,7 +6,19 @@ export default function determineResponseStrategy(proxy, rfs) {
 		return
 	}
 	
+	if(
+		rfs.originalRequestSummary.method === 'POST' 
+		|| rfs.originalRequestSummary.method === 'PUT' 
+		|| rfs.originalRequestSummary.method === 'DELETE') {
+			rfs.responseStrategy = ResponseStrategies.PASS
+			return
+	}
+	
 	if(rfs.originalRequestSummary.headers.cookie) {
+		rfs.responseStrategy = ResponseStrategies.PASS
+		return
+	}
+	if(rfs.originalRequestSummary.headers.authorization) {
 		rfs.responseStrategy = ResponseStrategies.PASS
 		return
 	}

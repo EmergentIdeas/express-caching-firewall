@@ -29,10 +29,10 @@ A Request for Service (RFS) is composed of:
 
 - The original http request
 - The original request summary
-- The backend request summary
+- (optionally) The backend request summary
 - (optionally) The actual backend request
 - (optionally) The actual backend response
-- The backend response summary
+- (optionally) The backend response summary
 - The original response summary
 - The original http response object
 - (optionally) A key for the content to be served to the requester
@@ -83,7 +83,6 @@ This may be a really simple algorithm, association a host name to a server. It c
 assignment based on server size, or a determination made by server load/health/availability.
 
 
-
 7. Cache Availability
 
 Determines if a cache entry exists for the request. At this point, we're not trying to determine if we should use it, just if it exists.
@@ -104,7 +103,7 @@ Possible values for `responseStrategy` are:
 - cachedAndRequest: serves the cached content but kicks off a request to refresh the content
 - requestAndCache: request the content and serve the returned content, caching the content for future use.
 - pass: treat as a stand-alone request. Still runs any transforms or cleanup code, but assumes this response is ineligible for
-		caching, for whatever reason
+		caching, for whatever reason. Any large file, like a zip or an mp4, should be treated as pass.
 - pipe: treat as a stand-alone request. Don't even try to run any of the post processing stuff.
 
 
@@ -140,13 +139,35 @@ Rewrites the response content for this request in ways specific for this request
 
 13. Response
 
-The original response summary is used to set parameters on the original http response object. Content is piped to the response.
+The original response summary is used to set parameters on the original http response object. Content is piped to the response
+or 304 Not Modified is signaled.
 
 
 
 
+## Cached Content Request
+
+To get cached content, the code issues a Cached Content Request. The cache is probably in memory, so this probably instantly available,
+but caches can have different storage mechanisms, including something like redis, that, while fast, are not instant.
+
+The cached content is requested with an identifier key and results in backend response summary and content emitted on the Cached Content
+Emitter.
 
 
+## Remote Content Request
+
+Fetches content from a remote data source. This step results in a backend request summary, backend response summary, http request,
+and an http response. 
+
+These are available from Remote Content Emitter.
+
+
+
+
+## Content Request
+
+Fetches content, but unlike the Remote Content Request, it delivers a backend response summary and the content. Some piece of code
+has done the work of processing the request and modifying the content.
 
 
 

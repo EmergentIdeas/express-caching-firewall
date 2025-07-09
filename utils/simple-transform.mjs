@@ -13,8 +13,8 @@ export default class SimpleTransform extends Transform {
 	}
 	_transform(chunk, encoding, callback) {
 		chunk = this.transformer ? this.transformer(chunk, encoding) : chunk
-		if(this.transformers) {
-			for(let transformer of this.transformers) {
+		if (this.transformers) {
+			for (let transformer of this.transformers) {
 				chunk = transformer.call(this, chunk, encoding)
 			}
 		}

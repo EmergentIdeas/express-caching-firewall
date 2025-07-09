@@ -1,14 +1,21 @@
 import transformHeaders from "./utils/transform-headers.mjs"
 import SimpleTransform from "./utils/simple-transform.mjs"
+import ResponseStrategies from "./data/response-strategies.mjs"
 
 export default function prepareBackendRequest(rfs) {
 	let trans = new SimpleTransform()
 	let backendRequest = Object.assign(trans, rfs.originalRequestSummary)
 	
 	rfs.backendRequestSummary = backendRequest
-	backendRequest.headers = Object.assign({}, rfs.originalRequestSummary.headers)
-	
-	
+	if(rfs.responseStrategy === ResponseStrategies.PASS) {
+	// if(true) {
+		backendRequest.headers = Object.assign({}, rfs.originalRequestSummary.headers)
+	}
+	else {
+		backendRequest.headers = {
+			host: rfs.originalRequestSummary.headers.host
+		}
+	}
 	transformHeaders(backendRequest.headers, this.prepareBackendHeaderTransformers)
 	
 

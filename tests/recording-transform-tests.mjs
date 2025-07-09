@@ -10,10 +10,12 @@ import DeadStream from '../utils/dead-stream.mjs'
 test('simple recording', async (t) => {
 	let response = await fetch('https://www.spam.com')
 	let recorder = new RecordingTransform()
+	
+	// Transform the fetch style stream to the node style stream and pipe it
+	// to nowhere
 	Readable.fromWeb(response.body).pipe(recorder).pipe(new DeadStream())
 	
 
-	assert.equal(1, 1)
 	recorder.on('end', () => {
 		assert(recorder.byteCount > 0)
 		assert(recorder.overflow == false)
@@ -30,10 +32,12 @@ test('too big recording', async (t) => {
 	let recorder = new RecordingTransform({
 		maxSize: 100
 	})
+	
+	// Transform the fetch style stream to the node style stream and pipe it
+	// to nowhere
 	Readable.fromWeb(response.body).pipe(recorder).pipe(new DeadStream())
 	
 
-	assert.equal(1, 1)
 	recorder.on('end', () => {
 		assert(recorder.byteCount > 0)
 		assert(recorder.overflow == true)

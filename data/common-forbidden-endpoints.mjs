@@ -90,5 +90,6 @@ export let commonForbiddenEndpoints = [
 ,"^.*pki-validation/.*\\.php$"
 ,"^.*\\.env.*$"
 ,"^.*/\\.\\.*$"
+// forbid urls where a path segment starts with the underscore
 ,"^.*/_.*$"
 ]

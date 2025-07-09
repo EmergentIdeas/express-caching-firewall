@@ -12,6 +12,7 @@ import scheduler from './scheduler-basic.mjs'
 import handleRequestWithError from "./handle-request-with-error.mjs"
 import determineResponseStrategy from "./determine-response-strategy.mjs"
 import createDeleteHeadersTransform from "./transform-tools/delete-headers-transform.mjs"
+import addCacheHeaders from "./transform-tools/add-cache-headers.mjs"
 
 export default class Lifecycle {
 	
@@ -46,8 +47,12 @@ export default class Lifecycle {
 		this.determineResponseStrategy = determineResponseStrategy
 		
 		this.responseHeaderTransformers = [
-			createDeleteHeadersTransform(['content-length', 'connection', 'date'])
+			createDeleteHeadersTransform([
+				'content-length', 'connection', 'date', 'keep-alive',  
+				'transfer-encoding', 'content-encoding', 'strict-transport-security'])
 		]
+		
+		this.addCacheHeaders = addCacheHeaders
 	}
 	
 

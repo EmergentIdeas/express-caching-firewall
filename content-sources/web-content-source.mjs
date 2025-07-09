@@ -23,40 +23,48 @@ export default class WebContentSource {
 		return ''
 	}
 
-	fetch(backendRequest, destination) {
-		let req = this.h.request(`${this.getScheme()}://${backendRequest.headers.host}${this.getPortSpec()}${backendRequest.serverRelativeRequest}`, {
-			lookup: (name, options, callback) => {
-				if (typeof callback !== 'function' && typeof options === 'function') {
-					callback = options
-					options = {}
+	fetch(backendRequest) {
+		let resolved = false
+		let rejected = false
+		let result
+		let p = new Promise((resolve, reject) => {
+
+			let req = this.h.request(`${this.getScheme()}://${backendRequest.headers.host}${this.getPortSpec()}${backendRequest.serverRelativeRequest}`, {
+				lookup: (name, options, callback) => {
+					if (typeof callback !== 'function' && typeof options === 'function') {
+						callback = options
+						options = {}
+					}
+					if (options.all) {
+						callback(null, [{ "address": this.ip, "family": 4 }])
+					}
+					else {
+						callback(null, num, 4)
+					}
 				}
-				if (options.all) {
-					callback(null, [{ "address": this.ip, "family": 4 }])
+				, method: backendRequest.method
+				, timeout: this.timeout
+				, headers: backendRequest.headers
+
+			}, (res) => {
+				result = res
+				resolved = true
+				resolve(res)
+			})
+
+
+			req.on('error', (e) => {
+				if(resolved) {
+					result.emit('error', e)
 				}
 				else {
-					callback(null, num, 4)
+					rejected = true
+					reject(e)
 				}
-			}
-			, method: backendRequest.method
-			, timeout: this.timeout
-			, headers: backendRequest.headers
-
-		}, (res) => {
-			destination.status(res.statusCode)
-			for (let key of Object.keys(res.headers)) {
-				destination.set(key, res.headers[key])
-			}
-			res.pipe(destination)
-			res.on('error', (e) => {
-				destination.emit('error', e)
 			})
+			backendRequest.pipe(req)
 		})
-
-
-		req.on('error', (e) => {
-			destination.emit('error', e)
-		})
-		backendRequest.pipe(req)
+		return p
 	}
 
 
